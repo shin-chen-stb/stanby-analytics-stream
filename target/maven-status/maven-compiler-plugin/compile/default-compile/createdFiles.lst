@@ -1,5 +1,0 @@
-inc/stanby/operators/AmazonElasticsearchSink$SerializableAWSSigningRequestInterceptor.class
-inc/stanby/BatchJob.class
-inc/stanby/operators/AmazonElasticsearchSink$1.class
-inc/stanby/operators/AmazonElasticsearchSink.class
-inc/stanby/StreamingJob.class
