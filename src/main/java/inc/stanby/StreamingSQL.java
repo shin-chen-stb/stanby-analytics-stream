@@ -33,7 +33,7 @@ package inc.stanby;
 
 import inc.stanby.operators.AmazonElasticsearchSink;
 import inc.stanby.schema.StanbyEvent;
-import inc.stanby.operators.StanbyEventSchema;
+import inc.stanby.utils.StanbyEventSchema;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -82,7 +82,7 @@ public class StreamingSQL {
     private static final String inputStreamName = "dmt-dataplatform-analytics-stream";
 	private static final String s3SinkPath = "s3a://dpg-chen/data-table-api";
 
-    private static DataStream<StanbyEventSchema> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
+    private static DataStream<StanbyEvent> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
         Properties inputProperties = new Properties();
         inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, region);
         inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "TRIM_HORIZON");
@@ -90,14 +90,14 @@ public class StreamingSQL {
         return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new StanbyEventSchema(), inputProperties));
     }
 
-    private static DataStream<StanbyEventSchema> createSourceFromApplicationProperties(StreamExecutionEnvironment env) throws IOException {
+    private static DataStream<StanbyEvent> createSourceFromApplicationProperties(StreamExecutionEnvironment env) throws IOException {
         Map<String, Properties> applicationProperties = KinesisAnalyticsRuntime.getApplicationProperties();
         return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new StanbyEventSchema(),
                 applicationProperties.get("ConsumerConfigProperties")));
     }
 
-	private static StreamingFileSink<String> createS3SinkFromStaticConfig() {
-        final StreamingFileSink<String> sink = StreamingFileSink
+	private static StreamingFileSink<StanbyEvent> createS3SinkFromStaticConfig() {
+        final StreamingFileSink<StanbyEvent> sink = StreamingFileSink
                 .forBulkFormat(new Path(s3SinkPath), ParquetAvroWriters.forSpecificRecord(StanbyEvent.class))
                 .withBucketAssigner(new DateTimeBucketAssigner("yyyy-MM-dd--HH"))
                 // .withRollingPolicy(

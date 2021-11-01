@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.amazonaws</groupId>
+    <groupId>inc.stanby</groupId>
     <artifactId>stanby-analytics-flink-SQL</artifactId>
-    <version>0.15</version>
+    <version>0.16</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -89,6 +89,13 @@
             <version>${flink.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-s3-fs-hadoop</artifactId>
+			<version>${flink.version}</version>
+		</dependency>
+
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
