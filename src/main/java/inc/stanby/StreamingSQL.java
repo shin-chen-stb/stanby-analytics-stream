@@ -18,8 +18,6 @@
 
 package inc.stanby;
 
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-
 /**
  * Skeleton for a Flink Streaming Job.
  *
@@ -34,7 +32,10 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  */
 
 import inc.stanby.operators.AmazonElasticsearchSink;
+import inc.stanby.schema.StanbyEvent;
+import inc.stanby.operators.StanbyEventSchema;
 
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.functions.RuntimeContext;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -51,7 +52,9 @@ import org.apache.flink.table.api.*;
 import static org.apache.flink.table.api.Expressions.*;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.types.Row;
-
+import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
+import org.apache.flink.core.fs.Path;
+import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.Header;
@@ -60,6 +63,7 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import com.amazonaws.services.kinesisanalytics.runtime.KinesisAnalyticsRuntime;
+import org.apache.flink.api.common.serialization.SimpleStringEncoder;
 
 import java.io.IOException;
 import java.util.Map;
@@ -67,24 +71,43 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import org.apache.flink.formats.parquet.avro.ParquetAvroWriters;
+import org.apache.avro.Schema;
+
 
 public class StreamingSQL {
 
 	private static final String region = "ap-northeast-1";
     private static final String inputStreamName = "dmt-dataplatform-analytics-stream";
+	private static final String s3SinkPath = "s3a://dpg-chen/data-table-api";
 
-    private static DataStream<String> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
+    private static DataStream<StanbyEventSchema> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
         Properties inputProperties = new Properties();
         inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, region);
         inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "TRIM_HORIZON");
 
-        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(), inputProperties));
+        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new StanbyEventSchema(), inputProperties));
     }
 
-    private static DataStream<String> createSourceFromApplicationProperties(StreamExecutionEnvironment env) throws IOException {
+    private static DataStream<StanbyEventSchema> createSourceFromApplicationProperties(StreamExecutionEnvironment env) throws IOException {
         Map<String, Properties> applicationProperties = KinesisAnalyticsRuntime.getApplicationProperties();
-        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(),
+        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new StanbyEventSchema(),
                 applicationProperties.get("ConsumerConfigProperties")));
+    }
+
+	private static StreamingFileSink<String> createS3SinkFromStaticConfig() {
+        final StreamingFileSink<String> sink = StreamingFileSink
+                .forBulkFormat(new Path(s3SinkPath), ParquetAvroWriters.forSpecificRecord(StanbyEvent.class))
+                .withBucketAssigner(new DateTimeBucketAssigner("yyyy-MM-dd--HH"))
+                // .withRollingPolicy(
+                //         DefaultRollingPolicy.builder()
+                //             .withRolloverInterval(TimeUnit.MINUTES.toMillis(15))
+                //             .withInactivityInterval(TimeUnit.MINUTES.toMillis(5))
+                //             .withMaxPartSize(1024 * 1024 * 1024)
+                //             .build())
+                .build();
+        return sink;
     }
 
 	public static void main(String[] args) throws Exception {
@@ -92,15 +115,15 @@ public class StreamingSQL {
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
-        DataStream<String> input = createSourceFromStaticConfig(env);
+        DataStream<StanbyEvent> input = createSourceFromStaticConfig(env);
 
-		Table table = tableEnv.fromDataStream(input);
+		// Table table = tableEnv.fromDataStream(input);
 
-		tableEnv.createTemporaryView("InputTable", input);
-		Table resultTable = tableEnv.sqlQuery("SELECT UPPER(f0) FROM InputTable");
-		DataStream<Row> resultStream = tableEnv.toDataStream(resultTable);
+		// tableEnv.createTemporaryView("InputTable", input);
+		// Table resultTable = tableEnv.sqlQuery("SELECT UPPER(f0) as c1, f1 as c2 FROM InputTable");
+		// DataStream<Row> resultStream = tableEnv.toDataStream(resultTable);
 
-		resultStream.writeAsText("s3://dpg-chen/test-sql");
+		input.addSink(createS3SinkFromStaticConfig());
 		// execute program
 		env.execute("Stanby Analytics Streaming sql dev");
 	}

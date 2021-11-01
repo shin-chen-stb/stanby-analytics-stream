@@ -6,7 +6,7 @@
 
     <groupId>com.amazonaws</groupId>
     <artifactId>stanby-analytics-flink-SQL</artifactId>
-    <version>0.12</version>
+    <version>0.15</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -15,6 +15,8 @@
         <scala.binary.version>2.12</scala.binary.version>
         <kda.version>2.0.0</kda.version>
         <kda.runtime.version>1.2.0</kda.runtime.version>
+        <avro.version>1.8.2</avro.version>
+        <flink.format.parquet.version>1.10.0</flink.format.parquet.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +71,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>    
+			<groupId>org.apache.parquet</groupId>
+			<artifactId>parquet-avro</artifactId>
+			<version>${flink.format.parquet.version}</version>
+		</dependency>
+
+        <dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-avro</artifactId>
+			<version>${flink.version}</version>
+		</dependency>
+
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner_${scala.binary.version}</artifactId>
@@ -80,6 +94,12 @@
             <artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-parquet_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
         </dependency>
 
         <dependency>
@@ -110,6 +130,26 @@
             <target>${java.version}</target>
         </configuration>
     </plugin>
+
+    <!-- Generate Avro classes -->
+    <plugin>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro-maven-plugin</artifactId>
+        <version>${avro.version}</version>
+        <executions>
+            <execution>
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>schema</goal>
+                </goals>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                    <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+
     <!-- We use the maven-shade plugin to create a fat jar that contains all necessary dependencies. -->
     <!-- Change the value of <mainClass>...</mainClass> if your program entry point changes. -->
     <plugin>
@@ -146,9 +186,15 @@
     </filters>
         <transformers>
             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                <mainClass>inc.stanby.StreamingJob</mainClass>
+                <mainClass>inc.stanby.StreamingSQL</mainClass>
             </transformer>
         </transformers>
+        <relocations combine.children="override">
+            <relocation>
+                <pattern>org.apache.avro</pattern>
+                <shadedPattern>com.amazonaws.samples.org.apache.avro</shadedPattern>
+            </relocation>
+        </relocations>
     </configuration>
     </execution>
     </executions>
