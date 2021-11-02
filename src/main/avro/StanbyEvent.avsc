@@ -55,7 +55,7 @@
         },
         {
             "name": "epoch",
-            "type": "int",
+            "type": "long",
             "default" : "NONE"
         },
         {

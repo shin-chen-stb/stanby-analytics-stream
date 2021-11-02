@@ -34,6 +34,7 @@ package inc.stanby;
 import inc.stanby.operators.AmazonElasticsearchSink;
 import inc.stanby.schema.StanbyEvent;
 import inc.stanby.utils.StanbyEventSchema;
+import inc.stanby.utils.StanbyEventBucketAssigner;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -64,6 +65,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import com.amazonaws.services.kinesisanalytics.runtime.KinesisAnalyticsRuntime;
 import org.apache.flink.api.common.serialization.SimpleStringEncoder;
+import org.apache.flink.streaming.api.functions.sink.filesystem.OutputFileConfig;
 
 import java.io.IOException;
 import java.util.Map;
@@ -97,9 +99,15 @@ public class StreamingSQL {
     }
 
 	private static StreamingFileSink<StanbyEvent> createS3SinkFromStaticConfig() {
+        OutputFileConfig outputFileConfig = OutputFileConfig
+            .builder()
+            .withPartSuffix(".parquet")
+            .build();
+
         final StreamingFileSink<StanbyEvent> sink = StreamingFileSink
                 .forBulkFormat(new Path(s3SinkPath), ParquetAvroWriters.forSpecificRecord(StanbyEvent.class))
-                .withBucketAssigner(new DateTimeBucketAssigner("yyyy-MM-dd--HH"))
+                .withBucketAssigner(new StanbyEventBucketAssigner())
+                .withOutputFileConfig(outputFileConfig)
                 // .withRollingPolicy(
                 //         DefaultRollingPolicy.builder()
                 //             .withRolloverInterval(TimeUnit.MINUTES.toMillis(15))

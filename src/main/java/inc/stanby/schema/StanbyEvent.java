@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 276738360353705757L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"StanbyEvent\",\"namespace\":\"inc.stanby.schema\",\"fields\":[{\"name\":\"service\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"event_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"suid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"ssid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"current_url\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"referrer\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"user_agent\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"search_request_id\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"epoch\",\"type\":\"int\",\"default\":\"NONE\"},{\"name\":\"ip\",\"type\":\"string\",\"default\":\"NONE\"}]}");
+  private static final long serialVersionUID = -2732263274051153410L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"StanbyEvent\",\"namespace\":\"inc.stanby.schema\",\"fields\":[{\"name\":\"service\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"event_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"suid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"ssid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"current_url\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"referrer\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"user_agent\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"search_request_id\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"epoch\",\"type\":\"long\",\"default\":\"NONE\"},{\"name\":\"ip\",\"type\":\"string\",\"default\":\"NONE\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -61,7 +61,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
   @Deprecated public java.lang.CharSequence page_type;
   @Deprecated public java.lang.CharSequence user_agent;
   @Deprecated public java.lang.CharSequence search_request_id;
-  @Deprecated public int epoch;
+  @Deprecated public long epoch;
   @Deprecated public java.lang.CharSequence ip;
 
   /**
@@ -86,7 +86,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
    * @param epoch The new value for epoch
    * @param ip The new value for ip
    */
-  public StanbyEvent(java.lang.CharSequence service, java.lang.CharSequence event_type, java.lang.CharSequence suid, java.lang.CharSequence ssid, java.lang.CharSequence current_url, java.lang.CharSequence referrer, java.lang.CharSequence page, java.lang.CharSequence page_type, java.lang.CharSequence user_agent, java.lang.CharSequence search_request_id, java.lang.Integer epoch, java.lang.CharSequence ip) {
+  public StanbyEvent(java.lang.CharSequence service, java.lang.CharSequence event_type, java.lang.CharSequence suid, java.lang.CharSequence ssid, java.lang.CharSequence current_url, java.lang.CharSequence referrer, java.lang.CharSequence page, java.lang.CharSequence page_type, java.lang.CharSequence user_agent, java.lang.CharSequence search_request_id, java.lang.Long epoch, java.lang.CharSequence ip) {
     this.service = service;
     this.event_type = event_type;
     this.suid = suid;
@@ -135,7 +135,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
     case 7: page_type = (java.lang.CharSequence)value$; break;
     case 8: user_agent = (java.lang.CharSequence)value$; break;
     case 9: search_request_id = (java.lang.CharSequence)value$; break;
-    case 10: epoch = (java.lang.Integer)value$; break;
+    case 10: epoch = (java.lang.Long)value$; break;
     case 11: ip = (java.lang.CharSequence)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -305,7 +305,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
    * Gets the value of the 'epoch' field.
    * @return The value of the 'epoch' field.
    */
-  public java.lang.Integer getEpoch() {
+  public java.lang.Long getEpoch() {
     return epoch;
   }
 
@@ -313,7 +313,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
    * Sets the value of the 'epoch' field.
    * @param value the value to set.
    */
-  public void setEpoch(java.lang.Integer value) {
+  public void setEpoch(java.lang.Long value) {
     this.epoch = value;
   }
 
@@ -375,7 +375,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
     private java.lang.CharSequence page_type;
     private java.lang.CharSequence user_agent;
     private java.lang.CharSequence search_request_id;
-    private int epoch;
+    private long epoch;
     private java.lang.CharSequence ip;
 
     /** Creates a new Builder */
@@ -889,7 +889,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
       * Gets the value of the 'epoch' field.
       * @return The value.
       */
-    public java.lang.Integer getEpoch() {
+    public java.lang.Long getEpoch() {
       return epoch;
     }
 
@@ -898,7 +898,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'epoch'.
       * @return This builder.
       */
-    public inc.stanby.schema.StanbyEvent.Builder setEpoch(int value) {
+    public inc.stanby.schema.StanbyEvent.Builder setEpoch(long value) {
       validate(fields()[10], value);
       this.epoch = value;
       fieldSetFlags()[10] = true;
@@ -977,7 +977,7 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
         record.page_type = fieldSetFlags()[7] ? this.page_type : (java.lang.CharSequence) defaultValue(fields()[7]);
         record.user_agent = fieldSetFlags()[8] ? this.user_agent : (java.lang.CharSequence) defaultValue(fields()[8]);
         record.search_request_id = fieldSetFlags()[9] ? this.search_request_id : (java.lang.CharSequence) defaultValue(fields()[9]);
-        record.epoch = fieldSetFlags()[10] ? this.epoch : (java.lang.Integer) defaultValue(fields()[10]);
+        record.epoch = fieldSetFlags()[10] ? this.epoch : (java.lang.Long) defaultValue(fields()[10]);
         record.ip = fieldSetFlags()[11] ? this.ip : (java.lang.CharSequence) defaultValue(fields()[11]);
         return record;
       } catch (java.lang.Exception e) {
