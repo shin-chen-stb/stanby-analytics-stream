@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -2732263274051153410L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"StanbyEvent\",\"namespace\":\"inc.stanby.schema\",\"fields\":[{\"name\":\"service\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"event_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"suid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"ssid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"current_url\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"referrer\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"user_agent\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"search_request_id\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"epoch\",\"type\":\"long\",\"default\":\"NONE\"},{\"name\":\"ip\",\"type\":\"string\",\"default\":\"NONE\"}]}");
+  private static final long serialVersionUID = 1444207714031555993L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"StanbyEvent\",\"namespace\":\"inc.stanby.schema\",\"fields\":[{\"name\":\"service\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"event_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"suid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"ssid\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"current_url\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"referrer\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"page_type\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"user_agent\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"search_request_id\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"epoch\",\"type\":\"long\",\"default\":\"NONE\"},{\"name\":\"ip\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"ua_os\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"ua_device\",\"type\":\"string\",\"default\":\"NONE\"},{\"name\":\"ua_family\",\"type\":\"string\",\"default\":\"NONE\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -63,6 +63,9 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
   @Deprecated public java.lang.CharSequence search_request_id;
   @Deprecated public long epoch;
   @Deprecated public java.lang.CharSequence ip;
+  @Deprecated public java.lang.CharSequence ua_os;
+  @Deprecated public java.lang.CharSequence ua_device;
+  @Deprecated public java.lang.CharSequence ua_family;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -85,8 +88,11 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
    * @param search_request_id The new value for search_request_id
    * @param epoch The new value for epoch
    * @param ip The new value for ip
+   * @param ua_os The new value for ua_os
+   * @param ua_device The new value for ua_device
+   * @param ua_family The new value for ua_family
    */
-  public StanbyEvent(java.lang.CharSequence service, java.lang.CharSequence event_type, java.lang.CharSequence suid, java.lang.CharSequence ssid, java.lang.CharSequence current_url, java.lang.CharSequence referrer, java.lang.CharSequence page, java.lang.CharSequence page_type, java.lang.CharSequence user_agent, java.lang.CharSequence search_request_id, java.lang.Long epoch, java.lang.CharSequence ip) {
+  public StanbyEvent(java.lang.CharSequence service, java.lang.CharSequence event_type, java.lang.CharSequence suid, java.lang.CharSequence ssid, java.lang.CharSequence current_url, java.lang.CharSequence referrer, java.lang.CharSequence page, java.lang.CharSequence page_type, java.lang.CharSequence user_agent, java.lang.CharSequence search_request_id, java.lang.Long epoch, java.lang.CharSequence ip, java.lang.CharSequence ua_os, java.lang.CharSequence ua_device, java.lang.CharSequence ua_family) {
     this.service = service;
     this.event_type = event_type;
     this.suid = suid;
@@ -99,6 +105,9 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
     this.search_request_id = search_request_id;
     this.epoch = epoch;
     this.ip = ip;
+    this.ua_os = ua_os;
+    this.ua_device = ua_device;
+    this.ua_family = ua_family;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -117,6 +126,9 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
     case 9: return search_request_id;
     case 10: return epoch;
     case 11: return ip;
+    case 12: return ua_os;
+    case 13: return ua_device;
+    case 14: return ua_family;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -137,6 +149,9 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
     case 9: search_request_id = (java.lang.CharSequence)value$; break;
     case 10: epoch = (java.lang.Long)value$; break;
     case 11: ip = (java.lang.CharSequence)value$; break;
+    case 12: ua_os = (java.lang.CharSequence)value$; break;
+    case 13: ua_device = (java.lang.CharSequence)value$; break;
+    case 14: ua_family = (java.lang.CharSequence)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -334,6 +349,54 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
+   * Gets the value of the 'ua_os' field.
+   * @return The value of the 'ua_os' field.
+   */
+  public java.lang.CharSequence getUaOs() {
+    return ua_os;
+  }
+
+  /**
+   * Sets the value of the 'ua_os' field.
+   * @param value the value to set.
+   */
+  public void setUaOs(java.lang.CharSequence value) {
+    this.ua_os = value;
+  }
+
+  /**
+   * Gets the value of the 'ua_device' field.
+   * @return The value of the 'ua_device' field.
+   */
+  public java.lang.CharSequence getUaDevice() {
+    return ua_device;
+  }
+
+  /**
+   * Sets the value of the 'ua_device' field.
+   * @param value the value to set.
+   */
+  public void setUaDevice(java.lang.CharSequence value) {
+    this.ua_device = value;
+  }
+
+  /**
+   * Gets the value of the 'ua_family' field.
+   * @return The value of the 'ua_family' field.
+   */
+  public java.lang.CharSequence getUaFamily() {
+    return ua_family;
+  }
+
+  /**
+   * Sets the value of the 'ua_family' field.
+   * @param value the value to set.
+   */
+  public void setUaFamily(java.lang.CharSequence value) {
+    this.ua_family = value;
+  }
+
+  /**
    * Creates a new StanbyEvent RecordBuilder.
    * @return A new StanbyEvent RecordBuilder
    */
@@ -377,6 +440,9 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
     private java.lang.CharSequence search_request_id;
     private long epoch;
     private java.lang.CharSequence ip;
+    private java.lang.CharSequence ua_os;
+    private java.lang.CharSequence ua_device;
+    private java.lang.CharSequence ua_family;
 
     /** Creates a new Builder */
     private Builder() {
@@ -437,6 +503,18 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
         this.ip = data().deepCopy(fields()[11].schema(), other.ip);
         fieldSetFlags()[11] = true;
       }
+      if (isValidValue(fields()[12], other.ua_os)) {
+        this.ua_os = data().deepCopy(fields()[12].schema(), other.ua_os);
+        fieldSetFlags()[12] = true;
+      }
+      if (isValidValue(fields()[13], other.ua_device)) {
+        this.ua_device = data().deepCopy(fields()[13].schema(), other.ua_device);
+        fieldSetFlags()[13] = true;
+      }
+      if (isValidValue(fields()[14], other.ua_family)) {
+        this.ua_family = data().deepCopy(fields()[14].schema(), other.ua_family);
+        fieldSetFlags()[14] = true;
+      }
     }
 
     /**
@@ -492,6 +570,18 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
       if (isValidValue(fields()[11], other.ip)) {
         this.ip = data().deepCopy(fields()[11].schema(), other.ip);
         fieldSetFlags()[11] = true;
+      }
+      if (isValidValue(fields()[12], other.ua_os)) {
+        this.ua_os = data().deepCopy(fields()[12].schema(), other.ua_os);
+        fieldSetFlags()[12] = true;
+      }
+      if (isValidValue(fields()[13], other.ua_device)) {
+        this.ua_device = data().deepCopy(fields()[13].schema(), other.ua_device);
+        fieldSetFlags()[13] = true;
+      }
+      if (isValidValue(fields()[14], other.ua_family)) {
+        this.ua_family = data().deepCopy(fields()[14].schema(), other.ua_family);
+        fieldSetFlags()[14] = true;
       }
     }
 
@@ -962,6 +1052,123 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
+    /**
+      * Gets the value of the 'ua_os' field.
+      * @return The value.
+      */
+    public java.lang.CharSequence getUaOs() {
+      return ua_os;
+    }
+
+    /**
+      * Sets the value of the 'ua_os' field.
+      * @param value The value of 'ua_os'.
+      * @return This builder.
+      */
+    public inc.stanby.schema.StanbyEvent.Builder setUaOs(java.lang.CharSequence value) {
+      validate(fields()[12], value);
+      this.ua_os = value;
+      fieldSetFlags()[12] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'ua_os' field has been set.
+      * @return True if the 'ua_os' field has been set, false otherwise.
+      */
+    public boolean hasUaOs() {
+      return fieldSetFlags()[12];
+    }
+
+
+    /**
+      * Clears the value of the 'ua_os' field.
+      * @return This builder.
+      */
+    public inc.stanby.schema.StanbyEvent.Builder clearUaOs() {
+      ua_os = null;
+      fieldSetFlags()[12] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'ua_device' field.
+      * @return The value.
+      */
+    public java.lang.CharSequence getUaDevice() {
+      return ua_device;
+    }
+
+    /**
+      * Sets the value of the 'ua_device' field.
+      * @param value The value of 'ua_device'.
+      * @return This builder.
+      */
+    public inc.stanby.schema.StanbyEvent.Builder setUaDevice(java.lang.CharSequence value) {
+      validate(fields()[13], value);
+      this.ua_device = value;
+      fieldSetFlags()[13] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'ua_device' field has been set.
+      * @return True if the 'ua_device' field has been set, false otherwise.
+      */
+    public boolean hasUaDevice() {
+      return fieldSetFlags()[13];
+    }
+
+
+    /**
+      * Clears the value of the 'ua_device' field.
+      * @return This builder.
+      */
+    public inc.stanby.schema.StanbyEvent.Builder clearUaDevice() {
+      ua_device = null;
+      fieldSetFlags()[13] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'ua_family' field.
+      * @return The value.
+      */
+    public java.lang.CharSequence getUaFamily() {
+      return ua_family;
+    }
+
+    /**
+      * Sets the value of the 'ua_family' field.
+      * @param value The value of 'ua_family'.
+      * @return This builder.
+      */
+    public inc.stanby.schema.StanbyEvent.Builder setUaFamily(java.lang.CharSequence value) {
+      validate(fields()[14], value);
+      this.ua_family = value;
+      fieldSetFlags()[14] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'ua_family' field has been set.
+      * @return True if the 'ua_family' field has been set, false otherwise.
+      */
+    public boolean hasUaFamily() {
+      return fieldSetFlags()[14];
+    }
+
+
+    /**
+      * Clears the value of the 'ua_family' field.
+      * @return This builder.
+      */
+    public inc.stanby.schema.StanbyEvent.Builder clearUaFamily() {
+      ua_family = null;
+      fieldSetFlags()[14] = false;
+      return this;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public StanbyEvent build() {
@@ -979,6 +1186,9 @@ public class StanbyEvent extends org.apache.avro.specific.SpecificRecordBase imp
         record.search_request_id = fieldSetFlags()[9] ? this.search_request_id : (java.lang.CharSequence) defaultValue(fields()[9]);
         record.epoch = fieldSetFlags()[10] ? this.epoch : (java.lang.Long) defaultValue(fields()[10]);
         record.ip = fieldSetFlags()[11] ? this.ip : (java.lang.CharSequence) defaultValue(fields()[11]);
+        record.ua_os = fieldSetFlags()[12] ? this.ua_os : (java.lang.CharSequence) defaultValue(fields()[12]);
+        record.ua_device = fieldSetFlags()[13] ? this.ua_device : (java.lang.CharSequence) defaultValue(fields()[13]);
+        record.ua_family = fieldSetFlags()[14] ? this.ua_family : (java.lang.CharSequence) defaultValue(fields()[14]);
         return record;
       } catch (java.lang.Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

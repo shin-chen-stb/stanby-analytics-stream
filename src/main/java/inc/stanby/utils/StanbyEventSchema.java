@@ -13,6 +13,10 @@ import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.node.Obje
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Map;
+import java.util.HashMap;
+import ua_parser.Parser;
+import ua_parser.Client;
 
 public class StanbyEventSchema implements SerializationSchema<StanbyEvent>, DeserializationSchema<StanbyEvent> {
 
@@ -25,6 +29,7 @@ public class StanbyEventSchema implements SerializationSchema<StanbyEvent>, Dese
 
   @Override
   public byte[] serialize(StanbyEvent event) {
+    LOG.info("Serializing node: {}", toJson(event));
     return toJson(event).getBytes();
   }
 
@@ -42,21 +47,54 @@ public class StanbyEventSchema implements SerializationSchema<StanbyEvent>, Dese
   public StanbyEvent deserialize(byte[] bytes) {
     try {
       ObjectNode node = this.mapper.readValue(bytes, ObjectNode.class);
+      LOG.info("Reading node: {}", node.toString());
+      String service = "";
+      String event_type = "";
+      String suid = "";
+      String ssid = "";
+      String current_url = "";
+      String referrer = "";
+      String page = "";
+      String page_type = "";
+      String user_agent = "";
+      String search_request_id = "";
+      Long epoch = 0L;
+      String ip = "";
 
+      if (node.has("service")) service = node.get("service").asText();
+      if (node.has("event_type")) event_type = node.get("event_type").asText();
+      if (node.has("suid")) suid = node.get("suid").asText();
+      if (node.has("ssid")) ssid = node.get("ssid").asText();
+      if (node.has("current_url")) current_url = node.get("current_url").asText();
+      if (node.has("referrer")) referrer = node.get("referrer").asText();
+      if (node.has("page")) page = node.get("page").asText();
+      if (node.has("page_type")) page_type = node.get("page_type").asText();
+      if (node.has("user_agent")) user_agent = node.get("user_agent").asText();
+      if (node.has("search_request_id")) search_request_id = node.get("search_request_id").asText();
+      if (node.has("epoch")) epoch = node.get("epoch").asLong();
+      if (node.has("ip")) ip = node.get("ip").asText();
+      Parser uaParser = new Parser();
+      Client c = uaParser.parse(user_agent.toString());
+      String ua_os = String.format("%s_%s", c.os.family, c.os.major);
+      String ua_device = c.device.family;
+      String ua_family = c.userAgent.family;
       return StanbyEvent
           .newBuilder()
-          .setService(node.get("service").asText())
-          .setEventType(node.get("event_type").asText())
-          .setSuid(node.get("suid").asText())
-          .setSsid(node.get("ssid").asText())
-          .setCurrentUrl(node.get("current_url").asText())
-          .setReferrer(node.get("referrer").asText())
-          .setPage(node.get("page").asText())
-          .setPageType(node.get("page_type").asText())
-          .setUserAgent(node.get("user_agent").asText())
-          .setSearchRequestId(node.get("search_request_id").asText())
-          .setEpoch(node.get("epoch").asLong())
-          .setIp(node.get("ip").asText())
+          .setService(service)
+          .setEventType(event_type)
+          .setSuid(suid)
+          .setSsid(ssid)
+          .setCurrentUrl(current_url)
+          .setReferrer(referrer)
+          .setPage(page)
+          .setPageType(page_type)
+          .setUserAgent(user_agent)
+          .setSearchRequestId(search_request_id)
+          .setEpoch(epoch)
+          .setIp(ip)
+          .setUaDevice(ua_os)
+          .setUaOs(ua_device)
+          .setUaFamily(ua_family)
           .build();
     } catch (Exception e) {
       LOG.warn("Failed to serialize event: {}", new String(bytes), e);
@@ -93,7 +131,11 @@ public class StanbyEventSchema implements SerializationSchema<StanbyEvent>, Dese
     builder.append(", ");
     addTextField(builder, event, "ip");
     builder.append(", ");
-    addTextField(builder, event, "type");
+    addTextField(builder, event, "ua_os");
+    builder.append(", ");
+    addField(builder, event, "ua_device");
+    builder.append(", ");
+    addTextField(builder, event, "ua_family");
     builder.append("}");
 
     return builder.toString();

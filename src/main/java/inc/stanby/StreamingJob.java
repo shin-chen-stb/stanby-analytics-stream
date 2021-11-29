@@ -34,6 +34,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  */
 
 import inc.stanby.operators.AmazonElasticsearchSink;
+import inc.stanby.schema.StanbyEvent;
+import inc.stanby.utils.StanbyEventSchema;
 
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.functions.RuntimeContext;
@@ -47,7 +49,11 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.
 import org.apache.flink.streaming.connectors.elasticsearch.ElasticsearchSinkFunction;
 import org.apache.flink.streaming.connectors.elasticsearch.RequestIndexer;
 import org.apache.flink.streaming.connectors.elasticsearch7.ElasticsearchSink;
-
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.util.Collector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.Header;
@@ -61,35 +67,43 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import ua_parser.Parser;
+import ua_parser.Client;
+
 
 public class StreamingJob {
 	private static String serviceName = "es";
 	private static final String region = "ap-northeast-1";
     private static final String inputStreamName = "dmt-dataplatform-analytics-stream";
-    private static final String domainEndpoint = "https://search-stanby-analytics-dev-chen-zz3th4na76mtpqi3mydqa55q64.ap-northeast-1.es.amazonaws.com";
+    private static final String domainEndpoint = "https://search-chen-stanby-analytics-dev-dqo5rvvb3udyugdkkrrzjr5gda.ap-northeast-1.es.amazonaws.com";
+    private static final Logger logger = LoggerFactory.getLogger(StreamingJob.class);
 
-    private static DataStream<String> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
+    private static DataStream<StanbyEvent> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
         Properties inputProperties = new Properties();
         inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, region);
         inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "TRIM_HORIZON");
 
-        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(), inputProperties));
+        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new StanbyEventSchema(), inputProperties));
     }
 
-    private static DataStream<String> createSourceFromApplicationProperties(StreamExecutionEnvironment env) throws IOException {
+    private static DataStream<StanbyEvent> createSourceFromApplicationProperties(StreamExecutionEnvironment env) throws IOException {
         Map<String, Properties> applicationProperties = KinesisAnalyticsRuntime.getApplicationProperties();
-        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(),
+        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new StanbyEventSchema(),
                 applicationProperties.get("ConsumerConfigProperties")));
     }
 
 	public static void main(String[] args) throws Exception {
 		// set up the streaming execution environment
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        DataStream<String> input = createSourceFromStaticConfig(env);
-		input.print();
-		input.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "stanby_event", "_doc"));
+        DataStream<StanbyEvent> input = createSourceFromStaticConfig(env);
+		input.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "stanby_event2", "_doc"));
 
 		// execute program
 		env.execute("Stanby Analytics Streaming dev");
