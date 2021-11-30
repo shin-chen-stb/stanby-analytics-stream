@@ -85,12 +85,18 @@ public class StreamingJob {
     private static final String domainEndpoint = "https://search-chen-stanby-analytics-dev-dqo5rvvb3udyugdkkrrzjr5gda.ap-northeast-1.es.amazonaws.com";
     private static final Logger logger = LoggerFactory.getLogger(StreamingJob.class);
 
-    private static DataStream<StanbyEvent> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
+    private static DataStream<StanbyEvent> createStanbyEventSourceFromStaticConfig(StreamExecutionEnvironment env, String inputStreamName) {
         Properties inputProperties = new Properties();
         inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, region);
         inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "TRIM_HORIZON");
-
         return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new StanbyEventSchema(), inputProperties));
+    }
+
+    private static DataStream<String> createSourceFromStaticConfig(StreamExecutionEnvironment env, String inputStreamName) {
+        Properties inputProperties = new Properties();
+        inputProperties.setProperty(ConsumerConfigConstants.AWS_REGION, region);
+        inputProperties.setProperty(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "TRIM_HORIZON");
+        return env.addSource(new FlinkKinesisConsumer<>(inputStreamName, new SimpleStringSchema(), inputProperties));
     }
 
     private static DataStream<StanbyEvent> createSourceFromApplicationProperties(StreamExecutionEnvironment env) throws IOException {
@@ -102,8 +108,10 @@ public class StreamingJob {
 	public static void main(String[] args) throws Exception {
 		// set up the streaming execution environment
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        DataStream<StanbyEvent> input = createSourceFromStaticConfig(env);
+        DataStream<StanbyEvent> input = createStanbyEventSourceFromStaticConfig(env, "dmt-dataplatform-analytics-stream");
 		input.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "stanby_event2", "_doc"));
+        DataStream<String> input3 = createSourceFromStaticConfig(env, "dmt-jse-tracker");
+		input3.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-tracker", "_doc"));
 
 		// execute program
 		env.execute("Stanby Analytics Streaming dev");

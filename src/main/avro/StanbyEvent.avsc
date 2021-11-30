@@ -24,12 +24,7 @@
             "default" : "NONE"
         },
         {
-            "name": "current_url",
-            "type": "string",
-            "default" : "NONE"
-        },
-        {
-            "name": "referrer",
+            "name": "search_request_id",
             "type": "string",
             "default" : "NONE"
         },
@@ -39,7 +34,42 @@
             "default" : "NONE"
         },
         {
-            "name": "page_type",
+            "name": "area",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "element",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "position",
+            "type": "int",
+            "default" : "NONE"
+        },
+        {
+            "name": "current_url",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "query_hash",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "link_url",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "document_id",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "referrer",
             "type": "string",
             "default" : "NONE"
         },
@@ -49,17 +79,49 @@
             "default" : "NONE"
         },
         {
-            "name": "search_request_id",
+            "name": "query_keyword",
             "type": "string",
             "default" : "NONE"
         },
         {
+            "name": "query_location",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "query_distance",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "query_open_date",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "dt",
+            "type": "int",
+            "logicalType": "date",
+            "default" : "NONE"
+        },
+        {
             "name": "epoch",
-            "type": "long",
+            "type": "int",
+            "logicalType": "date",
             "default" : "NONE"
         },
         {
             "name": "ip",
+            "type": "string",
+            "default" : "NONE"
+        },
+        {
+            "name": "is_ignore_ip",
+            "type": "boolean",
+            "default" : false
+        },
+        {
+            "name": "ua_category",
             "type": "string",
             "default" : "NONE"
         },
