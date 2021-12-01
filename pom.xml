@@ -6,7 +6,7 @@
 
     <groupId>inc.stanby</groupId>
     <artifactId>stanby-analytics-flink-Streaming2</artifactId>
-    <version>0.31</version>
+    <version>0.34</version>
     <packaging>jar</packaging>
 
     <properties>

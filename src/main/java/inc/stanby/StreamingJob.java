@@ -50,6 +50,8 @@ import org.apache.flink.streaming.connectors.elasticsearch.ElasticsearchSinkFunc
 import org.apache.flink.streaming.connectors.elasticsearch.RequestIndexer;
 import org.apache.flink.streaming.connectors.elasticsearch7.ElasticsearchSink;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
@@ -73,6 +75,8 @@ import java.util.Properties;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ua_parser.Parser;
 import ua_parser.Client;
@@ -111,30 +115,43 @@ public class StreamingJob {
         DataStream<StanbyEvent> input = createStanbyEventSourceFromStaticConfig(env, "dmt-dataplatform-analytics-stream");
 		input.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "stanby_event2", "_doc"));
         DataStream<String> input3 = createSourceFromStaticConfig(env, "dmt-jse-tracker");
+        input3 = input3.map(new MapFunction<String, String>() {
+            @Override
+            public String map(String in) {
+                Pattern pattern = Pattern.compile("(?<=\\\"cityCodes\\\":\\[\\\").+(?=\\\"\\])");
+                Matcher matcher = pattern.matcher(in);
+                if (matcher.find()) {
+                    String code = "JP-" + matcher.group().substring(0, 2);
+                    String res = in.replaceAll("(?<=\\\"cityCodes\\\":\\[\\\").+(?=\\\"\\])", code);
+                    return res;
+                }
+                return in;
+            }
+        });
 		input3.filter(new FilterFunction<String>() {
             @Override
             public boolean filter(String value) throws Exception {
                 return value.contains("jobSearchRequest");
             }
-        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-search", "_doc"));
+        }).addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-search", "_doc"));
 		input3.filter(new FilterFunction<String>() {
             @Override
             public boolean filter(String value) throws Exception {
                 return value.contains("jobImpression");
             }
-        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-impression", "_doc"));
+        }).addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-impression", "_doc"));
         input3.filter(new FilterFunction<String>() {
             @Override
             public boolean filter(String value) throws Exception {
                 return value.contains("jobDetailsImpression");
             }
-        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-detail-impression", "_doc"));
+        }).addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-detail-impression", "_doc"));
         input3.filter(new FilterFunction<String>() {
             @Override
             public boolean filter(String value) throws Exception {
                 return value.contains("jobClick");
             }
-        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-click", "_doc"));
+        }).addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-click", "_doc"));
 		// execute program
 		env.execute("Stanby Analytics Streaming dev");
 	}
