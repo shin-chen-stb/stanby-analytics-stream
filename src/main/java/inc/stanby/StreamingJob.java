@@ -111,8 +111,30 @@ public class StreamingJob {
         DataStream<StanbyEvent> input = createStanbyEventSourceFromStaticConfig(env, "dmt-dataplatform-analytics-stream");
 		input.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "stanby_event2", "_doc"));
         DataStream<String> input3 = createSourceFromStaticConfig(env, "dmt-jse-tracker");
-		input3.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-tracker", "_doc"));
-
+		input3.filter(new FilterFunction<String>() {
+            @Override
+            public boolean filter(String value) throws Exception {
+                return value.contains("jobSearchRequest");
+            }
+        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-search", "_doc"));
+		input3.filter(new FilterFunction<String>() {
+            @Override
+            public boolean filter(String value) throws Exception {
+                return value.contains("jobImpression");
+            }
+        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-impression", "_doc"));
+        input3.filter(new FilterFunction<String>() {
+            @Override
+            public boolean filter(String value) throws Exception {
+                return value.contains("jobDetailsImpression");
+            }
+        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-detail-impression", "_doc"));
+        input3.filter(new FilterFunction<String>() {
+            @Override
+            public boolean filter(String value) throws Exception {
+                return value.contains("jobClick");
+            }
+        });.addSink(AmazonElasticsearchSink.buildElasticsearchSink(domainEndpoint, region, "dmt-jse-job-click", "_doc"));
 		// execute program
 		env.execute("Stanby Analytics Streaming dev");
 	}
